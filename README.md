@@ -44,18 +44,41 @@ pip install -r requirements/requirements.txt
 
 ## Dataset Preparation
 
-### Dataset Download
+### Download the complete datasets
 
-It'll come soon.
+1. **[Amazon CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html)**: To download
+   the [CAMELYON16 dataset](https://camelyon16.grand-challenge.org/Data/)'s raw whole-slide
+   images, you'll need the AWS CLI. Install it by:
+
+    ```bash
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    ./aws/install
+
+    # download the whole CAMELYON16 dataset to `./CAMELYON16`
+    aws s3 sync s3://camelyon-dataset/CAMELYON16 ./CAMELYON16/ --no-sign-request
+    ```
+
+2. **[GDC Client](https://gdc.cancer.gov/access-data/gdc-data-transfer-tool)** (For downloading
+   the [TCGA dataset](https://portal.gdc.cancer.gov/projects/TCGA-LUAD)):
+   This is automatically downloaded and installed when you use the `scripts/download_tcga_lung.sh` script, just execute the command below:
+
+   ```bash
+    bash scripts/download_tcga_lung.sh
+   ```
+
+### Download the features extracted
+
+You can also download the features of WSIs that we extracted from the TCGA-Lung and CAMELYON16 from [Google Drive](https://drive.google.com/drive/folders/1DwcElWRUvOjeMNUfskDKJ_r5gvowFlxC?usp=sharing).
 
 ### Dataset Structure
 ```
 datasets/
 ├── mydatasets/
-│   ├── TCGA-lung-uni2/
+│   ├── TCGA-lung/
 │   │   ├── pt_files/          # Feature vectors (.pt files)
 │   │   └── TCGA.csv           # Dataset labels
-│   └── CAMELYON16-uni2/
+│   └── CAMELYON16/
 │       ├── pt_files/          # Feature vectors (.pt files)
 │       └── Camelyon16.csv     # Dataset labels
 ```
@@ -66,24 +89,12 @@ datasets/
 
 **Train on TCGA Lung dataset:**
 ```bash
-python train.py --model rmil_gru --dataset_dir datasets/mydatasets/TCGA-lung-uni2 --label_file TCGA.csv
+python train.py --model rmil_gru --dataset_dir datasets/mydatasets/TCGA-lung --label_file TCGA.csv
 ```
 
 **Train on Camelyon16 dataset:**
 ```bash
-python train.py --model rmil_gru --dataset_dir datasets/mydatasets/CAMELYON16-uni2 --label_file Camelyon16.csv --num_classes 1
-```
-
-**Train with custom parameters:**
-```bash
-python train.py \
-    --model rmil_gru \
-    --dataset_dir datasets/mydatasets/TCGA-lung-uni2 \
-    --label_file TCGA.csv \
-    --num_epochs 100 \
-    --lr 0.0002 \
-    --eval_scheme 5-fold-cv \
-    --use_wandb
+python train.py --model rmil_gru --dataset_dir datasets/mydatasets/CAMELYON16 --label_file Camelyon16.csv --num_classes 2
 ```
 
 ## Visualization
@@ -94,7 +105,8 @@ Generate patch-level score visualizations for WSI analysis:
 python visualization.py \
     --model rmil_gru \
     --model_weights weights/best_model.pth \
-    --wsi_id TCGA-55-8091-01Z-00-DX1 \
+    --wsi_id tumor_016 \
+    --wsi_format tif \
     --wsi_dir ./sample_wsi
 ```
 
@@ -104,6 +116,12 @@ The visualization script supports:
 - Multiple WSI formats
 - Batch processing capabilities
 
+![](imgs/visualization.png)
+
+## Acknowledgement
+
+This codebase is built on the work of [Snuffy](https://github.com/jafarinia/snuffy), [dsmil-wsi](https://github.com/binli123/dsmil-wsi), [PrePATH](https://github.com/birkhoffkiki/PrePATH), [Vim](https://github.com/hustvl/Vim), [ttt-lm-pytorch](https://github.com/test-time-training/ttt-lm-pytorch)
+
 ## Citation
 
 If you use this code in your research, please cite:
@@ -111,3 +129,5 @@ If you use this code in your research, please cite:
 ```bibtex
 
 ```
+
+
