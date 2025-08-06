@@ -25,7 +25,6 @@ test.ipynb
 gdc-client*
 *.log
 *.json
-*.sh
 datasets
 wandb/
 pt_files
