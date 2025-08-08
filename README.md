@@ -31,8 +31,8 @@ This repository implements multiple recurrent MIL architectures for WSI analysis
 ### Setup
 ```bash
 # Clone repository
-git clone https://github.com/XXXXXX/rmil-wsi.git
-cd rmil-wsi
+git clone https://github.com/XXXXXX/xxx.git
+cd xxx
 
 # Install mamba
 pip install -e requirements/causal_conv1d
